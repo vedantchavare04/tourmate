@@ -1,4 +1,3 @@
-// components/animated-nav-framer.tsx
 "use client";
 
 import * as React from "react";
@@ -118,12 +117,11 @@ export function AnimatedNavFramer() {
         >
           <Navigation className="h-6 w-6" />
         </motion.div>
-        
-        {/* === ИЗМЕНЕНИЕ ЗДЕСЬ === */}
+
         <motion.div
           className={cn(
             "flex items-center gap-1 sm:gap-4 pr-4",
-            !isExpanded && "pointer-events-none" // Делаем ссылки некликабельными в свернутом виде
+            !isExpanded && "pointer-events-none" 
           )}
         >
           {navItems.map((item) => (

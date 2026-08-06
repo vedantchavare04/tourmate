@@ -5,8 +5,6 @@ export default function Navbar() {
     <>
       <AnimatedNavFramer />
       <main className="container mx-auto px-4">
-        <div className="h-screen pt-24">
-        </div>
       </main>
     </>
   );
