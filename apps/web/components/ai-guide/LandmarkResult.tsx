@@ -15,9 +15,15 @@ import {
   Info,
 } from "lucide-react";
 import type { LandmarkAnalysis } from "@/src/lib/landmark-schema";
+import { getLanguage } from "@/src/lib/languages";
+import { LanguageSelector } from "@/components/ai-guide/LanguageSelector";
+import { VoiceGuide } from "@/components/ai-guide/VoiceGuide";
 
 interface LandmarkResultProps {
   result: LandmarkAnalysis;
+  language: string;
+  onLanguageChange: (code: string) => void;
+  isTranslating: boolean;
   onAnalyzeAnother: () => void;
 }
 
@@ -41,11 +47,43 @@ function Section({
   );
 }
 
-export function LandmarkResult({ result, onAnalyzeAnother }: LandmarkResultProps) {
+function buildVoiceScript(result: LandmarkAnalysis): string {
+  if (!result.identified) {
+    return [result.description, result.uncertainty].filter(Boolean).join(". ");
+  }
+  return [
+    result.name,
+    result.description,
+    result.history,
+    result.architecture,
+    result.culturalSignificance,
+    ...result.interestingFacts,
+    ...result.travelTips,
+  ]
+    .filter(Boolean)
+    .join(". ");
+}
+
+export function LandmarkResult({
+  result,
+  language,
+  onLanguageChange,
+  isTranslating,
+  onAnalyzeAnother,
+}: LandmarkResultProps) {
   const confidencePercent = Math.round(result.confidence * 100);
   const locationLabel = [result.location.city, result.location.country]
     .filter(Boolean)
     .join(", ");
+  const speechLang = getLanguage(language).speechLang;
+  const voiceScript = buildVoiceScript(result);
+
+  const controls = (
+    <div className="flex flex-wrap items-center gap-2">
+      <LanguageSelector language={language} onChange={onLanguageChange} isTranslating={isTranslating} />
+      <VoiceGuide text={voiceScript} speechLang={speechLang} />
+    </div>
+  );
 
   if (!result.identified) {
     return (
@@ -55,7 +93,9 @@ export function LandmarkResult({ result, onAnalyzeAnother }: LandmarkResultProps
         transition={{ duration: 0.4 }}
         className="text-center"
       >
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-50 border border-amber-200">
+        <div className="flex justify-center">{controls}</div>
+
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-50 border border-amber-200 mt-5">
           <HelpCircle className="w-6 h-6 text-amber-600" aria-hidden="true" />
         </div>
         <h2 className="font-black text-xl md:text-2xl mt-4">Couldn&rsquo;t confidently identify this</h2>
@@ -89,16 +129,19 @@ export function LandmarkResult({ result, onAnalyzeAnother }: LandmarkResultProps
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="inline-flex items-center gap-1.5 bg-[#0038FF]/5 text-[#0038FF] font-bold text-[11px] uppercase tracking-wide px-3 py-1 rounded-full">
-          <Sparkles className="w-3 h-3" aria-hidden="true" />
-          AI identification &middot; {confidencePercent}% confidence
-        </div>
-        {result.category && (
-          <div className="inline-flex items-center bg-black/5 text-black/60 font-bold text-[11px] uppercase tracking-wide px-3 py-1 rounded-full">
-            {result.category}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="inline-flex items-center gap-1.5 bg-[#0038FF]/5 text-[#0038FF] font-bold text-[11px] uppercase tracking-wide px-3 py-1 rounded-full">
+            <Sparkles className="w-3 h-3" aria-hidden="true" />
+            AI identification &middot; {confidencePercent}% confidence
           </div>
-        )}
+          {result.category && (
+            <div className="inline-flex items-center bg-black/5 text-black/60 font-bold text-[11px] uppercase tracking-wide px-3 py-1 rounded-full">
+              {result.category}
+            </div>
+          )}
+        </div>
+        {controls}
       </div>
 
       <h2 className="font-black text-2xl md:text-3xl uppercase tracking-tight mt-3">

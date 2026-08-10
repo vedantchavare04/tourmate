@@ -8,6 +8,8 @@ import { ImagePreview } from "@/components/ai-guide/ImagePreview";
 import { AnalysisState } from "@/components/ai-guide/AnalysisState";
 import { LandmarkResult } from "@/components/ai-guide/LandmarkResult";
 import { analyzeLandmark, type LandmarkAnalysis } from "@/src/lib/analyze-landmark";
+import { translateLandmark } from "@/src/lib/translate-landmark";
+import { DEFAULT_LANGUAGE_CODE } from "@/src/lib/languages";
 
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
@@ -32,6 +34,9 @@ export default function AiGuidePage() {
   const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [result, setResult] = useState<LandmarkAnalysis | null>(null);
 
+  const [language, setLanguage] = useState(DEFAULT_LANGUAGE_CODE);
+  const [translations, setTranslations] = useState<Record<string, LandmarkAnalysis>>({});
+  const [isTranslating, setIsTranslating] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -79,6 +84,8 @@ export default function AiGuidePage() {
     setResult(null);
     setSelectionError(null);
     setAnalysisError(null);
+    setLanguage(DEFAULT_LANGUAGE_CODE);
+    setTranslations({});
     setStage("empty");
   }, []);
 
@@ -88,6 +95,8 @@ export default function AiGuidePage() {
     try {
       const analysis = await analyzeLandmark(targetFile);
       setResult(analysis);
+      setLanguage(DEFAULT_LANGUAGE_CODE);
+      setTranslations({});
       setStage("result");
     } catch (error) {
       setAnalysisError(
@@ -108,6 +117,29 @@ export default function AiGuidePage() {
     if (!file) return;
     void runAnalysis(file);
   }, [file, runAnalysis]);
+
+  const handleLanguageChange = useCallback(
+    async (code: string) => {
+      if (!result || code === language) return;
+      setLanguage(code);
+
+      if (code === DEFAULT_LANGUAGE_CODE || translations[code]) return;
+
+      setIsTranslating(true);
+      try {
+        const translated = await translateLandmark(result, code);
+        setTranslations((previous) => ({ ...previous, [code]: translated }));
+      } catch {
+        setLanguage(DEFAULT_LANGUAGE_CODE);
+      } finally {
+        setIsTranslating(false);
+      }
+    },
+    [result, language, translations]
+  );
+
+  const displayedResult =
+    language === DEFAULT_LANGUAGE_CODE ? result : (translations[language] ?? result);
 
   return (
     <main className="min-h-screen bg-[#0038FF] relative overflow-hidden">
@@ -163,8 +195,14 @@ export default function AiGuidePage() {
 
             {stage === "analyzing" && <AnalysisState previewUrl={previewUrl} />}
 
-            {stage === "result" && result && (
-              <LandmarkResult result={result} onAnalyzeAnother={handleRemove} />
+            {stage === "result" && displayedResult && (
+              <LandmarkResult
+                result={displayedResult}
+                language={language}
+                onLanguageChange={handleLanguageChange}
+                isTranslating={isTranslating}
+                onAnalyzeAnother={handleRemove}
+              />
             )}
 
             {stage === "error" && (
