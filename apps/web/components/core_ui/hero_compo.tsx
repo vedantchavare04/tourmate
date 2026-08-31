@@ -1,8 +1,11 @@
 "use client"
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import Image from 'next/image';
+import { useSession } from 'next-auth/react';
+import { AuthDialog } from '@/components/auth/AuthDialog';
+import { NavAuthTrigger } from '@/components/auth/NavAuthTrigger';
 
 
 const ArrowGreenLeft = () => (
@@ -33,28 +36,44 @@ const ArrowBlack2 = () => (
   </svg>
 );
 
-const CircularBadge = () => (
-  <div className="relative w-28 h-28 md:w-36 md:h-36 bg-[#CCFF00] rounded-full flex items-center justify-center shadow-xl rotate-12 hover:scale-105 transition-transform cursor-pointer border-[3px] border-black/5">
-    <div className="absolute inset-1 animate-[spin_10s_linear_infinite]">
-      <svg viewBox="0 0 100 100" className="w-full h-full">
-        <path id="circlePath" d="M 50, 50 m -36, 0 a 36,36 0 1,1 72,0 a 36,36 0 1,1 -72,0" fill="none" />
-        <text className="text-[11px] font-black tracking-[0.18em] uppercase" fill="black">
-          <textPath href="#circlePath" startOffset="0%">
-            START YOUR JOURNEY NOW •
-          </textPath>
-        </text>
-      </svg>
-    </div>
-    <div className="absolute inset-0 flex items-center justify-center">
-      <svg viewBox="0 0 100 100" className="w-10 h-10 text-black stroke-current overflow-visible" fill="none" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20,80 Q 40,50 30,30 T 80,20" />
-        <path d="M60,10 L80,20 L70,40" />
-      </svg>
-    </div>
-  </div>
-);
+const CircularBadge = ({ onStart }: { onStart: () => void }) => {
+  const { status } = useSession();
+  const label =  "START YOUR JOURNEY NOW";
+
+  return (
+    <button
+      type="button"
+      onClick={onStart}
+      aria-label={status === "authenticated" ? "View your profile" : "Start your journey with Google"}
+      className="relative w-28 h-28 md:w-36 md:h-36 bg-[#CCFF00] rounded-full flex items-center justify-center shadow-xl rotate-12 hover:scale-105 transition-transform cursor-pointer border-[3px] border-black/5"
+    >
+      <div className="absolute inset-1 animate-[spin_10s_linear_infinite]">
+        <svg viewBox="0 0 100 100" className="w-full h-full">
+          <path id="circlePath" d="M 50, 50 m -36, 0 a 36,36 0 1,1 72,0 a 36,36 0 1,1 -72,0" fill="none" />
+          <text className="text-[11px] font-black tracking-[0.18em] uppercase" fill="black">
+            <textPath href="#circlePath" startOffset="0%">
+              {label} •
+            </textPath>
+          </text>
+        </svg>
+      </div>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <svg viewBox="0 0 100 100" className="w-10 h-10 text-black stroke-current overflow-visible" fill="none" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20,80 Q 40,50 30,30 T 80,20" />
+          <path d="M60,10 L80,20 L70,40" />
+        </svg>
+      </div>
+    </button>
+  );
+};
 
 export const HeroComponent = () => {
+  const [showDialog, setShowDialog] = useState(false);
+
+  const handleOpenAuth = () => {
+    setShowDialog(true);
+  };
+
   return (
     <div className="min-h-screen bg-[#0038FF] flex flex-col font-sans selection:bg-[#CCFF00] selection:text-black relative overflow-hidden w-full">
       
@@ -74,11 +93,8 @@ export const HeroComponent = () => {
           </div>
         </div>
 
-
-        {/* Connect Button */}
-        <button className="px-6 py-2 rounded-full border border-white text-white text-xs md:text-sm font-semibold hover:bg-white hover:text-[#0038FF] transition-colors">
-          Start Your Journey
-        </button>
+        {/* Auth control: sign-in pill, avatar, or loading skeleton */}
+        <NavAuthTrigger onClick={handleOpenAuth} />
       </nav>
 
       {/* Hero Section */}
@@ -112,7 +128,7 @@ export const HeroComponent = () => {
                   textShadow: '1px 1px 0 #001A99, 2px 2px 0 #001A99, 3px 3px 0 #001A99, 4px 4px 0 #001A99, 5px 5px 0 #001A99, 6px 6px 0 #001A99, 7px 7px 0 #001A99, 8px 8px 0 #001A99, 9px 9px 0 #001A99, 10px 10px 0 #001A99, 11px 11px 0 #001A99, 12px 12px 0 #001A99, 13px 13px 0 #001A99, 14px 14px 0 #001A99'
                 }}
               >
-                SOCIALFI
+                SOCIALIFY
               </h1>
             </div>
             
@@ -138,7 +154,7 @@ export const HeroComponent = () => {
             <motion.div 
               animate={{ y: [0, -15, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute bottom-[10%] left-[5%] md:left-[20%] z-30 pointer-events-auto"
+              className="absolute bottom-[-10%] left-[10%] md:left-[7%] z-30 pointer-events-auto"
             >
               <div className="w-40 md:w-52 aspect-[3/3.5] bg-white/20 backdrop-blur-md border border-white/40 rounded-[2rem] p-5 flex flex-col items-center justify-center rotate-[-12deg] shadow-2xl hover:rotate-0 transition-transform duration-500">
                 <div className="w-30 h-20 md:w-24 md:h-24 bg-[#D2B48C] rounded-lg flex items-center justify-center mb-4 shadow-inner border-[3px] border-white/50 overflow-hidden">
@@ -154,7 +170,7 @@ export const HeroComponent = () => {
             <motion.div 
               animate={{ y: [0, -20, 0] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              className="absolute top-[15%] right-[5%] md:right-[22%] z-30 pointer-events-auto"
+              className="absolute top-[2%] right-[10%] md:right-[-20%] z-30 pointer-events-auto"
             >
               <div className="w-40 md:w-52 aspect-[3/3.5] bg-white/20 backdrop-blur-md border border-white/40 rounded-[2rem] p-5 flex flex-col items-center justify-center rotate-[12deg] shadow-2xl hover:rotate-0 transition-transform duration-500">
                 <div className="w-30 h-20 md:w-24 md:h-24 bg-[#2C3E50] rounded-lg flex items-center justify-center mb-4 shadow-inner border-[3px] border-white/50 overflow-hidden">
@@ -167,18 +183,18 @@ export const HeroComponent = () => {
             </motion.div>
 
             {/* Decorative Arrow Left */}
-            <div className="absolute bottom-[0%] left-[0%] md:left-[10%] w-24 h-24 md:w-32 md:h-32 z-20">
+            <div className="absolute bottom-[0%] left-[0%] md:left-[-5%] w-24 h-24 md:w-32 md:h-32 z-20">
               <ArrowGreenLeft />
             </div>
 
             {/* Decorative Arrow Right */}
-            <div className="absolute top-[5%] right-[0%] md:right-[10%] w-24 h-24 md:w-32 md:h-32 z-20">
+            <div className="absolute top-[-23%] right-[10%] md:right-[-20%] w-24 h-24 md:w-32 md:h-32 z-20">
               <ArrowGreenRight />
             </div>
 
             {/* Circular Badge */}
-            <div className="absolute bottom-[-10%] right-[0%] md:right-[15%] z-40 pointer-events-auto">
-              <CircularBadge />
+            <div className="absolute bottom-[-10%] right-[0%] md:right-[-10%] z-40 pointer-events-auto">
+              <CircularBadge onStart={handleOpenAuth} />
             </div>
 
           </div>
@@ -274,6 +290,8 @@ export const HeroComponent = () => {
 
         </div>
       </section>
+
+      <AuthDialog open={showDialog} onClose={() => setShowDialog(false)} />
 
     </div>
   );

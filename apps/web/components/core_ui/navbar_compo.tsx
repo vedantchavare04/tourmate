@@ -6,10 +6,10 @@ import { Navigation, Menu } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 
 const navItems = [
-  { name: "Home", href: "#" },
-  { name: "About", href: "#" },
-  { name: "Services", href: "#" },
-  { name: "Contact", href: "#" },
+  { name: "Home", href: "/" },
+  { name: "About", href: "/about" },
+  { name: "How It Works?", href: "/how-it-works" },
+  { name: "Travel Guide", href: "/ai-guide" },
 ];
 
 const EXPAND_SCROLL_THRESHOLD = 80;

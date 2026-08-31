@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 export type SpeechStatus = "unsupported" | "idle" | "speaking" | "paused";
 
+
 export function useSpeechSynthesis() {
   const [status, setStatus] = useState<SpeechStatus>("idle");
   const supported = useRef(true);

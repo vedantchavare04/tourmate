@@ -6,6 +6,7 @@ export interface LandmarkAnalysis {
     city: string | null;
     country: string | null;
   };
+  /** 0 to 1 */
   confidence: number;
   category: string | null;
   description: string;

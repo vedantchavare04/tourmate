@@ -18,6 +18,8 @@ import type { LandmarkAnalysis } from "@/src/lib/landmark-schema";
 import { getLanguage } from "@/src/lib/languages";
 import { LanguageSelector } from "@/components/ai-guide/LanguageSelector";
 import { VoiceGuide } from "@/components/ai-guide/VoiceGuide";
+import { WeatherWidget } from "@/components/ai-guide/WeatherWidget";
+import { LandmarkChat } from "@/components/ai-guide/LandmarkChat";
 
 interface LandmarkResultProps {
   result: LandmarkAnalysis;
@@ -148,9 +150,12 @@ export function LandmarkResult({
         {result.name}
       </h2>
       {locationLabel && (
-        <div className="flex items-center gap-1.5 text-black/60 text-sm mt-1">
-          <MapPin className="w-4 h-4" aria-hidden="true" />
-          {locationLabel}
+        <div className="flex flex-wrap items-center gap-2 mt-1">
+          <div className="flex items-center gap-1.5 text-black/60 text-sm">
+            <MapPin className="w-4 h-4" aria-hidden="true" />
+            {locationLabel}
+          </div>
+          <WeatherWidget city={result.location.city} country={result.location.country} />
         </div>
       )}
 
@@ -220,20 +225,12 @@ export function LandmarkResult({
       )}
 
       <p className="text-black/35 text-xs mt-6">
-        Opening hours, ticket prices, and current weather aren&rsquo;t available yet — those will
-        arrive once TourMate connects to live data sources.
+        Opening hours and ticket prices aren&rsquo;t available yet — those will arrive once
+        TourMate connects to live booking data.
       </p>
 
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6">
-        <button
-          type="button"
-          disabled
-          title="Coming soon"
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#0038FF]/40 text-white font-black text-sm md:text-base px-8 py-3.5 rounded-full cursor-not-allowed"
-        >
-          <Sparkles className="w-4 h-4 text-[#CCFF00]/70" aria-hidden="true" />
-          Explore Guide
-        </button>
+      <div className="flex flex-col items-center gap-3 mt-6">
+        <LandmarkChat result={result} language={language} />
         <button
           type="button"
           onClick={onAnalyzeAnother}

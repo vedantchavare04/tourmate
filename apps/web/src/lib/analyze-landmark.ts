@@ -2,7 +2,6 @@ import type { LandmarkAnalysis } from "@/src/lib/landmark-schema";
 
 export type { LandmarkAnalysis } from "@/src/lib/landmark-schema";
 
-
 export async function analyzeLandmark(file: File): Promise<LandmarkAnalysis> {
   const formData = new FormData();
   formData.append("image", file);

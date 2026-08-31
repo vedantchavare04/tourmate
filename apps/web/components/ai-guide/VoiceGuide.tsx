@@ -5,17 +5,13 @@ import { Pause, Play, Square, Volume2 } from "lucide-react";
 import { useSpeechSynthesis } from "@/src/hooks/use-speech-synthesis";
 
 interface VoiceGuideProps {
-  /** The full text to read aloud. */
   text: string;
-  /** BCP-47 language tag, e.g. "es-ES". */
   speechLang: string;
 }
 
 export function VoiceGuide({ text, speechLang }: VoiceGuideProps) {
   const { status, speak, pause, resume, stop } = useSpeechSynthesis();
 
-  // If the guide's language or text changes (e.g. the user switches
-  // language) while it's playing, stop rather than keep reading stale audio.
   useEffect(() => {
     stop();
   }, [text, speechLang, stop]);

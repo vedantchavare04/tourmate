@@ -24,6 +24,7 @@ Rules you must follow:
 - interestingFacts and travelTips should each be short, concrete bullet points (omit if you don't have anything genuinely useful — an empty array is fine).
 - Respond only with the structured fields you're given — do not add commentary outside them.`;
 
+
 const RESPONSE_SCHEMA: Schema = {
   type: Type.OBJECT,
   properties: {

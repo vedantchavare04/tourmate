@@ -1,5 +1,6 @@
 import type { LandmarkAnalysis } from "@/src/lib/landmark-schema";
 
+
 export async function translateLandmark(
   result: LandmarkAnalysis,
   language: string
