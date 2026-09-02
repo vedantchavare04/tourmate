@@ -146,7 +146,7 @@ export default function AboutSection3() {
             </div>
           </div>
 
-          {/* Main Image */}
+          {/* Main Image -- exact original clip-path shape, untouched */}
           <TimelineContent
             as="figure"
             animationNum={4}
@@ -182,60 +182,25 @@ export default function AboutSection3() {
             </svg>
           </TimelineContent>
 
-          {/* Stats */}
-          <div className="flex flex-wrap lg:justify-start justify-between items-center py-3 text-sm">
+          <div className="flex flex-col gap-3 py-3 text-sm">
 
-            {/* Left Stats */}
             <TimelineContent
               as="div"
-              animationNum={5}
+              animationNum={6}
               timelineRef={heroRef}
               customVariants={revealVariants}
-              className="flex gap-4"
+              className="flex w-max lg:text-4xl sm:text-3xl text-2xl items-center gap-2 mb-2"
             >
-              <div className="flex items-center gap-2 mb-2 sm:text-base text-xs">
-                <span className="text-red-500 font-bold">
-                  AI
-                </span>
+              <span className="text-red-500 font-semibold">
+                3
+              </span>
 
-                <span className="text-gray-600 whitespace-nowrap">
-                  powered travel assistance
-                </span>
-
-                <span className="text-gray-300">
-                  |
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2 mb-2 sm:text-base text-xs">
-                <span className="text-red-500 font-bold">
-                  24/7
-                </span>
-
-                <span className="text-gray-600 whitespace-nowrap">
-                  travel companion
-                </span>
-              </div>
+              <span className="text-gray-600 uppercase whitespace-nowrap">
+                core modules
+              </span>
             </TimelineContent>
 
-            {/* Right Stats */}
-            <div className="lg:absolute right-0 bottom-16 w-max flex lg:flex-col flex-row-reverse lg:gap-0 gap-4">
-
-              <TimelineContent
-                as="div"
-                animationNum={6}
-                timelineRef={heroRef}
-                customVariants={revealVariants}
-                className="flex w-max lg:text-4xl sm:text-3xl text-2xl items-center gap-2 mb-2"
-              >
-                <span className="text-red-500 font-semibold">
-                  3
-                </span>
-
-                <span className="text-gray-600 uppercase whitespace-nowrap">
-                  core modules
-                </span>
-              </TimelineContent>
+            <div className="flex flex-wrap items-center gap-2">
 
               <TimelineContent
                 as="div"
@@ -252,12 +217,45 @@ export default function AboutSection3() {
                   driven exploration
                 </span>
 
-                <span className="text-gray-300 lg:hidden block">
+                <span className="text-gray-300 block">
                   |
                 </span>
               </TimelineContent>
 
+              <TimelineContent
+                as="div"
+                animationNum={5}
+                timelineRef={heroRef}
+                customVariants={revealVariants}
+                className="flex gap-4"
+              >
+                <div className="flex items-center gap-2 mb-2 sm:text-base text-xs">
+                  <span className="text-red-500 font-bold">
+                    AI
+                  </span>
+
+                  <span className="text-gray-600 whitespace-nowrap">
+                    powered travel assistance
+                  </span>
+
+                  <span className="text-gray-300">
+                    |
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 mb-2 sm:text-base text-xs">
+                  <span className="text-red-500 font-bold">
+                    24/7
+                  </span>
+
+                  <span className="text-gray-600 whitespace-nowrap">
+                    travel companion
+                  </span>
+                </div>
+              </TimelineContent>
+
             </div>
+
           </div>
         </div>
 
