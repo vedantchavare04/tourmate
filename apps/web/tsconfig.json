@@ -3,20 +3,18 @@
   "compilerOptions": {
     "declaration": false,
     "declarationMap": false,
-    "ignoreDeprecations": "6.0",
     "plugins": [
       {
         "name": "next"
-      },
+      }
     ],
-    "strictNullChecks": true,  
+    "strictNullChecks": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
       "@repo/ui/*": ["../../packages/ui/*"]
     }
   },
-
   "include": [
     "**/*.ts",
     "**/*.tsx",
