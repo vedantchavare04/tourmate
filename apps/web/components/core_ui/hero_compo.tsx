@@ -93,8 +93,19 @@ export const HeroComponent = () => {
           </div>
         </div>
 
-        {/* Auth control: sign-in pill, avatar, or loading skeleton */}
-        <NavAuthTrigger onClick={handleOpenAuth} />
+        {/* TourMate ecosystem return link and auth control */}
+        <div className="flex items-center gap-2">
+          <a
+            href="https://homepage-indol-psi.vercel.app/"
+            aria-label="Return to TourMate Home"
+            className="inline-flex min-h-10 items-center gap-2 rounded-full border border-white/40 bg-white/10 px-3 py-2 text-xs font-semibold text-white backdrop-blur-sm transition hover:bg-white/20 sm:px-4 sm:text-sm"
+          >
+            <span aria-hidden="true">←</span>
+            <span className="hidden sm:inline">TourMate Home</span>
+            <span className="sm:hidden">Home</span>
+          </a>
+          <NavAuthTrigger onClick={handleOpenAuth} />
+        </div>
       </nav>
 
       {/* Hero Section */}
