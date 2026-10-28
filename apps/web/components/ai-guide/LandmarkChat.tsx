@@ -1,9 +1,18 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AlertCircle, Loader2, MessageCircle, Send, X } from "lucide-react";
+import {
+  AlertCircle,
+  Loader2,
+  MessageCircle,
+  Send,
+  X,
+} from "lucide-react";
 import type { LandmarkAnalysis } from "@/src/lib/landmark-schema";
-import { askLandmarkChat, type ChatHistoryMessage } from "@/src/lib/chat-landmark";
+import {
+  askLandmarkChat,
+  type ChatHistoryMessage,
+} from "@/src/lib/chat-landmark";
 
 interface DisplayMessage extends ChatHistoryMessage {
   id: string;
@@ -14,7 +23,11 @@ interface LandmarkChatProps {
   language: string;
 }
 
-const STARTER_QUESTIONS = ["Why was this built?", "Who built it?", "What makes it famous?"];
+const STARTER_QUESTIONS = [
+  "Why was this built?",
+  "Who built it?",
+  "What makes it famous?",
+];
 
 function makeId() {
   return typeof crypto !== "undefined" && "randomUUID" in crypto
@@ -31,7 +44,10 @@ export function LandmarkChat({ result, language }: LandmarkChatProps) {
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
+    listRef.current?.scrollTo({
+      top: listRef.current.scrollHeight,
+      behavior: "smooth",
+    });
   }, [messages, isSending]);
 
   const sendQuestion = useCallback(
@@ -41,15 +57,36 @@ export function LandmarkChat({ result, language }: LandmarkChatProps) {
 
       setError(null);
       setInput("");
-      const history: ChatHistoryMessage[] = messages.map(({ role, text }) => ({ role, text }));
-      setMessages((prev) => [...prev, { id: makeId(), role: "user", text: trimmed }]);
+
+      const history: ChatHistoryMessage[] = messages.map(({ role, text }) => ({
+        role,
+        text,
+      }));
+
+      setMessages((previous) => [
+        ...previous,
+        { id: makeId(), role: "user", text: trimmed },
+      ]);
       setIsSending(true);
 
       try {
-        const answer = await askLandmarkChat({ result, language, history, question: trimmed });
-        setMessages((prev) => [...prev, { id: makeId(), role: "assistant", text: answer }]);
+        const answer = await askLandmarkChat({
+          result,
+          language,
+          history,
+          question: trimmed,
+        });
+
+        setMessages((previous) => [
+          ...previous,
+          { id: makeId(), role: "assistant", text: answer },
+        ]);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Something went wrong. Please try again."
+        );
       } finally {
         setIsSending(false);
       }
@@ -62,32 +99,42 @@ export function LandmarkChat({ result, language }: LandmarkChatProps) {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#0038FF] text-white font-black text-sm md:text-base px-8 py-3.5 rounded-full shadow-lg hover:brightness-110 active:scale-[0.98] transition"
+        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--tourmate-coral)] px-8 py-3.5 text-sm font-black text-white shadow-lg transition hover:bg-[var(--tourmate-coral-dark)] active:scale-[0.98] sm:w-auto md:text-base"
       >
-        <MessageCircle className="w-4 h-4 text-[#CCFF00]" aria-hidden="true" />
+        <MessageCircle
+          className="h-4 w-4 text-[var(--tourmate-gold)]"
+          aria-hidden="true"
+        />
         Ask About This Place
       </button>
     );
   }
 
   return (
-    <div className="w-full bg-[#F8F9FA] rounded-[1.5rem] border border-black/5 overflow-hidden text-left">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-black/5">
-        <span className="flex items-center gap-1.5 font-bold text-sm">
-          <MessageCircle className="w-4 h-4 text-[#0038FF]" aria-hidden="true" />
+    <div className="w-full overflow-hidden rounded-[1.5rem] border border-[var(--tourmate-line)] bg-[var(--tourmate-sand)] text-left">
+      <div className="flex items-center justify-between border-b border-[var(--tourmate-line)] px-4 py-3">
+        <span className="flex items-center gap-1.5 text-sm font-bold text-[var(--tourmate-ink)]">
+          <MessageCircle
+            className="h-4 w-4 text-[var(--tourmate-coral)]"
+            aria-hidden="true"
+          />
           Ask about {result.name ?? "this place"}
         </span>
+
         <button
           type="button"
           onClick={() => setIsOpen(false)}
           aria-label="Close chat"
-          className="text-black/40 hover:text-black/70 transition"
+          className="text-[var(--tourmate-dim)] transition hover:text-[var(--tourmate-coral-dark)]"
         >
-          <X className="w-4 h-4" aria-hidden="true" />
+          <X className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
 
-      <div ref={listRef} className="max-h-72 overflow-y-auto px-4 py-3 space-y-3">
+      <div
+        ref={listRef}
+        className="max-h-72 space-y-3 overflow-y-auto px-4 py-3"
+      >
         {messages.length === 0 && (
           <div className="flex flex-wrap gap-2">
             {STARTER_QUESTIONS.map((question) => (
@@ -95,7 +142,7 @@ export function LandmarkChat({ result, language }: LandmarkChatProps) {
                 key={question}
                 type="button"
                 onClick={() => void sendQuestion(question)}
-                className="text-xs font-semibold bg-white border border-black/10 rounded-full px-3 py-1.5 hover:border-[#0038FF]/40 transition"
+                className="rounded-full border border-[var(--tourmate-line)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--tourmate-ink)] transition hover:border-[var(--tourmate-coral)]"
               >
                 {question}
               </button>
@@ -108,8 +155,8 @@ export function LandmarkChat({ result, language }: LandmarkChatProps) {
             key={message.id}
             className={`max-w-[85%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed ${
               message.role === "user"
-                ? "ml-auto bg-[#0038FF] text-white"
-                : "mr-auto bg-white text-black/80 border border-black/5"
+                ? "ml-auto bg-[var(--tourmate-coral)] text-white"
+                : "mr-auto border border-[var(--tourmate-line)] bg-white text-[var(--tourmate-ink)]"
             }`}
           >
             {message.text}
@@ -117,16 +164,19 @@ export function LandmarkChat({ result, language }: LandmarkChatProps) {
         ))}
 
         {isSending && (
-          <div className="mr-auto flex items-center gap-1.5 text-black/40 text-xs">
-            <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
+          <div className="mr-auto flex items-center gap-1.5 text-xs text-[var(--tourmate-dim)]">
+            <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
             Thinking…
           </div>
         )}
       </div>
 
       {error && (
-        <div className="flex items-start gap-2 text-rose-700 bg-rose-50 border-t border-rose-200 px-4 py-2 text-xs">
-          <AlertCircle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" aria-hidden="true" />
+        <div className="flex items-start gap-2 border-t border-[var(--tourmate-line)] bg-[var(--tourmate-sand)] px-4 py-2 text-xs text-[var(--tourmate-coral-dark)]">
+          <AlertCircle
+            className="mt-0.5 h-3.5 w-3.5 flex-shrink-0"
+            aria-hidden="true"
+          />
           <span>{error}</span>
         </div>
       )}
@@ -136,7 +186,7 @@ export function LandmarkChat({ result, language }: LandmarkChatProps) {
           event.preventDefault();
           void sendQuestion(input);
         }}
-        className="flex items-center gap-2 p-3 border-t border-black/5"
+        className="flex items-center gap-2 border-t border-[var(--tourmate-line)] p-3"
       >
         <input
           type="text"
@@ -145,15 +195,16 @@ export function LandmarkChat({ result, language }: LandmarkChatProps) {
           placeholder="Ask a question…"
           disabled={isSending}
           aria-label="Ask a question about this place"
-          className="flex-1 bg-white border border-black/10 rounded-full px-4 py-2 text-sm outline-none focus:border-[#0038FF]/50 disabled:opacity-60"
+          className="flex-1 rounded-full border border-[var(--tourmate-line)] bg-white px-4 py-2 text-sm text-[var(--tourmate-ink)] outline-none placeholder:text-[var(--tourmate-dim)] focus:border-[var(--tourmate-teal)] disabled:opacity-60"
         />
+
         <button
           type="submit"
           disabled={isSending || !input.trim()}
           aria-label="Send"
-          className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-[#0038FF] text-white disabled:opacity-40 transition flex-shrink-0"
+          className="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[var(--tourmate-coral)] text-white transition hover:bg-[var(--tourmate-coral-dark)] disabled:opacity-40"
         >
-          <Send className="w-4 h-4" aria-hidden="true" />
+          <Send className="h-4 w-4" aria-hidden="true" />
         </button>
       </form>
     </div>
