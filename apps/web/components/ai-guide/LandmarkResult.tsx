@@ -40,11 +40,14 @@ function Section({
 }) {
   return (
     <div className="mt-6">
-      <h3 className="flex items-center gap-1.5 font-bold text-xs uppercase tracking-wide text-black/40">
-        <Icon className="w-3.5 h-3.5" aria-hidden="true" />
+      <h3 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-[var(--tourmate-dim)]">
+        <Icon className="h-3.5 w-3.5" aria-hidden="true" />
         {title}
       </h3>
-      <div className="text-black/80 text-sm md:text-base leading-relaxed mt-2">{children}</div>
+
+      <div className="mt-2 text-sm leading-relaxed text-[var(--tourmate-ink)] md:text-base">
+        {children}
+      </div>
     </div>
   );
 }
@@ -53,6 +56,7 @@ function buildVoiceScript(result: LandmarkAnalysis): string {
   if (!result.identified) {
     return [result.description, result.uncertainty].filter(Boolean).join(". ");
   }
+
   return [
     result.name,
     result.description,
@@ -82,7 +86,11 @@ export function LandmarkResult({
 
   const controls = (
     <div className="flex flex-wrap items-center gap-2">
-      <LanguageSelector language={language} onChange={onLanguageChange} isTranslating={isTranslating} />
+      <LanguageSelector
+        language={language}
+        onChange={onLanguageChange}
+        isTranslating={isTranslating}
+      />
       <VoiceGuide text={voiceScript} speechLang={speechLang} />
     </div>
   );
@@ -97,27 +105,38 @@ export function LandmarkResult({
       >
         <div className="flex justify-center">{controls}</div>
 
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-50 border border-amber-200 mt-5">
-          <HelpCircle className="w-6 h-6 text-amber-600" aria-hidden="true" />
+        <div className="mt-5 inline-flex h-14 w-14 items-center justify-center rounded-full border border-[var(--tourmate-line)] bg-[var(--tourmate-sand)]">
+          <HelpCircle
+            className="h-6 w-6 text-[var(--tourmate-teal-dark)]"
+            aria-hidden="true"
+          />
         </div>
-        <h2 className="font-black text-xl md:text-2xl mt-4">Couldn&rsquo;t confidently identify this</h2>
-        <p className="text-black/70 text-sm md:text-base leading-relaxed mt-3 max-w-md mx-auto">
+
+        <h2 className="mt-4 text-xl font-black text-[var(--tourmate-ink)] md:text-2xl">
+          Couldn&rsquo;t confidently identify this
+        </h2>
+
+        <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-[var(--tourmate-dim)] md:text-base">
           {result.description}
         </p>
+
         {result.uncertainty && (
-          <div className="flex items-start gap-2 text-left text-amber-800 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mt-4 text-sm max-w-md mx-auto">
-            <Info className="w-4 h-4 mt-0.5 flex-shrink-0" aria-hidden="true" />
+          <div className="mx-auto mt-4 flex max-w-md items-start gap-2 rounded-xl border border-[var(--tourmate-coral)]/30 bg-[var(--tourmate-sand)] px-4 py-3 text-left text-sm text-[var(--tourmate-coral-dark)]">
+            <Info
+              className="mt-0.5 h-4 w-4 flex-shrink-0"
+              aria-hidden="true"
+            />
             <span>{result.uncertainty}</span>
           </div>
         )}
 
-        <div className="flex justify-center mt-7">
+        <div className="mt-7 flex justify-center">
           <button
             type="button"
             onClick={onAnalyzeAnother}
-            className="inline-flex items-center justify-center gap-2 bg-[#0038FF] text-white font-black text-sm md:text-base px-8 py-3.5 rounded-full shadow-lg hover:brightness-110 active:scale-[0.98] transition"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--tourmate-coral)] px-8 py-3.5 text-sm font-black text-white shadow-lg transition hover:bg-[var(--tourmate-coral-dark)] active:scale-[0.98] md:text-base"
           >
-            <RotateCcw className="w-4 h-4" aria-hidden="true" />
+            <RotateCcw className="h-4 w-4" aria-hidden="true" />
             Try Another Photo
           </button>
         </div>
@@ -133,53 +152,64 @@ export function LandmarkResult({
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <div className="inline-flex items-center gap-1.5 bg-[#0038FF]/5 text-[#0038FF] font-bold text-[11px] uppercase tracking-wide px-3 py-1 rounded-full">
-            <Sparkles className="w-3 h-3" aria-hidden="true" />
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-[var(--tourmate-sky)] px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-[var(--tourmate-teal-dark)]">
+            <Sparkles className="h-3 w-3" aria-hidden="true" />
             AI identification &middot; {confidencePercent}% confidence
           </div>
+
           {result.category && (
-            <div className="inline-flex items-center bg-black/5 text-black/60 font-bold text-[11px] uppercase tracking-wide px-3 py-1 rounded-full">
+            <div className="inline-flex items-center rounded-full bg-[var(--tourmate-sand)] px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-[var(--tourmate-ink)]">
               {result.category}
             </div>
           )}
         </div>
+
         {controls}
       </div>
 
-      <h2 className="font-black text-2xl md:text-3xl uppercase tracking-tight mt-3">
+      <h2 className="mt-3 text-2xl font-black uppercase tracking-tight text-[var(--tourmate-ink)] md:text-3xl">
         {result.name}
       </h2>
+
       {locationLabel && (
-        <div className="flex flex-wrap items-center gap-2 mt-1">
-          <div className="flex items-center gap-1.5 text-black/60 text-sm">
-            <MapPin className="w-4 h-4" aria-hidden="true" />
+        <div className="mt-1 flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5 text-sm text-[var(--tourmate-dim)]">
+            <MapPin className="h-4 w-4" aria-hidden="true" />
             {locationLabel}
           </div>
-          <WeatherWidget city={result.location.city} country={result.location.country} />
+
+          <WeatherWidget
+            city={result.location.city}
+            country={result.location.country}
+          />
         </div>
       )}
 
-      <p className="text-black/80 text-sm md:text-base leading-relaxed mt-4">
+      <p className="mt-4 text-sm leading-relaxed text-[var(--tourmate-ink)] md:text-base">
         {result.description}
       </p>
 
-      {(result.unescoStatus || result.bestTimeToVisit || result.estimatedVisitDuration) && (
-        <div className="flex flex-wrap gap-2 mt-4">
+      {(result.unescoStatus ||
+        result.bestTimeToVisit ||
+        result.estimatedVisitDuration) && (
+        <div className="mt-4 flex flex-wrap gap-2">
           {result.unescoStatus && (
-            <span className="inline-flex items-center gap-1.5 bg-[#CCFF00]/20 text-black/80 text-xs font-semibold px-3 py-1.5 rounded-full">
-              <Award className="w-3.5 h-3.5" aria-hidden="true" />
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--tourmate-sand)] px-3 py-1.5 text-xs font-semibold text-[var(--tourmate-ink)]">
+              <Award className="h-3.5 w-3.5" aria-hidden="true" />
               {result.unescoStatus}
             </span>
           )}
+
           {result.bestTimeToVisit && (
-            <span className="inline-flex items-center gap-1.5 bg-black/5 text-black/70 text-xs font-semibold px-3 py-1.5 rounded-full">
-              <CalendarDays className="w-3.5 h-3.5" aria-hidden="true" />
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--tourmate-sky)] px-3 py-1.5 text-xs font-semibold text-[var(--tourmate-ink)]">
+              <CalendarDays className="h-3.5 w-3.5" aria-hidden="true" />
               {result.bestTimeToVisit}
             </span>
           )}
+
           {result.estimatedVisitDuration && (
-            <span className="inline-flex items-center gap-1.5 bg-black/5 text-black/70 text-xs font-semibold px-3 py-1.5 rounded-full">
-              <Clock className="w-3.5 h-3.5" aria-hidden="true" />
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--tourmate-sky)] px-3 py-1.5 text-xs font-semibold text-[var(--tourmate-ink)]">
+              <Clock className="h-3.5 w-3.5" aria-hidden="true" />
               {result.estimatedVisitDuration}
             </span>
           )}
@@ -206,7 +236,7 @@ export function LandmarkResult({
 
       {result.interestingFacts.length > 0 && (
         <Section icon={Lightbulb} title="Interesting facts">
-          <ul className="space-y-1.5 list-disc list-inside marker:text-[#0038FF]">
+          <ul className="list-inside list-disc space-y-1.5 marker:text-[var(--tourmate-coral)]">
             {result.interestingFacts.map((fact) => (
               <li key={fact}>{fact}</li>
             ))}
@@ -216,7 +246,7 @@ export function LandmarkResult({
 
       {result.travelTips.length > 0 && (
         <Section icon={Info} title="Travel tips">
-          <ul className="space-y-1.5 list-disc list-inside marker:text-[#0038FF]">
+          <ul className="list-inside list-disc space-y-1.5 marker:text-[var(--tourmate-coral)]">
             {result.travelTips.map((tip) => (
               <li key={tip}>{tip}</li>
             ))}
@@ -224,19 +254,20 @@ export function LandmarkResult({
         </Section>
       )}
 
-      <p className="text-black/35 text-xs mt-6">
-        Opening hours and ticket prices aren&rsquo;t available yet — those will arrive once
-        TourMate connects to live booking data.
+      <p className="mt-6 text-xs text-[var(--tourmate-dim)]">
+        Opening hours and ticket prices aren&rsquo;t available yet — those will
+        arrive once TourMate connects to live booking data.
       </p>
 
-      <div className="flex flex-col items-center gap-3 mt-6">
+      <div className="mt-6 flex flex-col items-center gap-3">
         <LandmarkChat result={result} language={language} />
+
         <button
           type="button"
           onClick={onAnalyzeAnother}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white text-black font-bold text-sm px-6 py-3.5 rounded-full border-[1.5px] border-black/15 hover:border-black/30 active:scale-[0.98] transition"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full border-[1.5px] border-[var(--tourmate-line)] bg-white px-6 py-3.5 text-sm font-bold text-[var(--tourmate-ink)] transition hover:border-[var(--tourmate-teal)] active:scale-[0.98] sm:w-auto"
         >
-          <RotateCcw className="w-4 h-4" aria-hidden="true" />
+          <RotateCcw className="h-4 w-4" aria-hidden="true" />
           Analyze Another Image
         </button>
       </div>
