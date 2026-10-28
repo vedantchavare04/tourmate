@@ -1,18 +1,27 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type ChangeEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+} from "react";
 import { AlertTriangle, RotateCcw, Upload } from "lucide-react";
 import { GuideHero } from "@/components/ai-guide/GuideHero";
 import { ImageUploader } from "@/components/ai-guide/ImageUploader";
 import { ImagePreview } from "@/components/ai-guide/ImagePreview";
 import { AnalysisState } from "@/components/ai-guide/AnalysisState";
 import { LandmarkResult } from "@/components/ai-guide/LandmarkResult";
-import { analyzeLandmark, type LandmarkAnalysis } from "@/src/lib/analyze-landmark";
+import {
+  analyzeLandmark,
+  type LandmarkAnalysis,
+} from "@/src/lib/analyze-landmark";
 import { translateLandmark } from "@/src/lib/translate-landmark";
 import { DEFAULT_LANGUAGE_CODE } from "@/src/lib/languages";
 
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
+const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 
 type GuideStage = "empty" | "preview" | "analyzing" | "result" | "error";
 
@@ -20,9 +29,11 @@ function validateImageFile(file: File): string | null {
   if (!ACCEPTED_TYPES.includes(file.type)) {
     return "Please upload a JPG, PNG, or WEBP image.";
   }
+
   if (file.size > MAX_FILE_SIZE_BYTES) {
     return "That image is larger than 10MB. Please choose a smaller file.";
   }
+
   return null;
 }
 
@@ -35,7 +46,9 @@ export default function AiGuidePage() {
   const [result, setResult] = useState<LandmarkAnalysis | null>(null);
 
   const [language, setLanguage] = useState(DEFAULT_LANGUAGE_CODE);
-  const [translations, setTranslations] = useState<Record<string, LandmarkAnalysis>>({});
+  const [translations, setTranslations] = useState<
+    Record<string, LandmarkAnalysis>
+  >({});
   const [isTranslating, setIsTranslating] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -49,6 +62,7 @@ export default function AiGuidePage() {
 
   const handleFileSelected = useCallback((candidate: File) => {
     const validationError = validateImageFile(candidate);
+
     if (validationError) {
       setSelectionError(validationError);
       return;
@@ -56,16 +70,19 @@ export default function AiGuidePage() {
 
     setSelectionError(null);
     setFile(candidate);
+
     setPreviewUrl((previous) => {
       if (previous) URL.revokeObjectURL(previous);
       return URL.createObjectURL(candidate);
     });
+
     setStage("preview");
   }, []);
 
   const handleInputChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       const picked = event.target.files?.[0];
+
       if (picked) handleFileSelected(picked);
       event.target.value = "";
     },
@@ -77,10 +94,12 @@ export default function AiGuidePage() {
 
   const handleRemove = useCallback(() => {
     setFile(null);
+
     setPreviewUrl((previous) => {
       if (previous) URL.revokeObjectURL(previous);
       return null;
     });
+
     setResult(null);
     setSelectionError(null);
     setAnalysisError(null);
@@ -92,6 +111,7 @@ export default function AiGuidePage() {
   const runAnalysis = useCallback(async (targetFile: File) => {
     setAnalysisError(null);
     setStage("analyzing");
+
     try {
       const analysis = await analyzeLandmark(targetFile);
       setResult(analysis);
@@ -121,11 +141,13 @@ export default function AiGuidePage() {
   const handleLanguageChange = useCallback(
     async (code: string) => {
       if (!result || code === language) return;
+
       setLanguage(code);
 
       if (code === DEFAULT_LANGUAGE_CODE || translations[code]) return;
 
       setIsTranslating(true);
+
       try {
         const translated = await translateLandmark(result, code);
         setTranslations((previous) => ({ ...previous, [code]: translated }));
@@ -139,20 +161,17 @@ export default function AiGuidePage() {
   );
 
   const displayedResult =
-    language === DEFAULT_LANGUAGE_CODE ? result : (translations[language] ?? result);
+    language === DEFAULT_LANGUAGE_CODE
+      ? result
+      : (translations[language] ?? result);
 
   return (
-    <main className="min-h-screen bg-[#0038FF] relative overflow-hidden">
-      <div
-        className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff15_1px,transparent_1px),linear-gradient(to_bottom,#ffffff15_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none"
-        aria-hidden="true"
-      />
-
-      <div className="relative z-10 px-4 pt-32 pb-20 md:pt-40 md:pb-28">
+    <main className="relative min-h-screen overflow-hidden bg-[var(--tourmate-ink)]">
+      <div className="relative z-10 px-4 pb-20 pt-32 md:pb-28 md:pt-40">
         <GuideHero compact={stage !== "empty"} />
 
-        <div className="max-w-2xl mx-auto mt-10 md:mt-14">
-          <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.25)] p-6 md:p-10">
+        <div className="mx-auto mt-10 max-w-2xl md:mt-14">
+          <div className="rounded-[2rem] bg-[var(--tourmate-paper)] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.25)] md:rounded-[2.5rem] md:p-10">
             <input
               ref={fileInputRef}
               type="file"
@@ -162,6 +181,7 @@ export default function AiGuidePage() {
               tabIndex={-1}
               aria-hidden="true"
             />
+
             <input
               ref={cameraInputRef}
               type="file"
@@ -193,7 +213,9 @@ export default function AiGuidePage() {
               />
             )}
 
-            {stage === "analyzing" && <AnalysisState previewUrl={previewUrl} />}
+            {stage === "analyzing" && (
+              <AnalysisState previewUrl={previewUrl} />
+            )}
 
             {stage === "result" && displayedResult && (
               <LandmarkResult
@@ -207,28 +229,38 @@ export default function AiGuidePage() {
 
             {stage === "error" && (
               <div className="text-center" role="alert" aria-live="assertive">
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-rose-50 border border-rose-200">
-                  <AlertTriangle className="w-6 h-6 text-rose-600" aria-hidden="true" />
+                <div className="inline-flex h-14 w-14 items-center justify-center rounded-full border border-[var(--tourmate-coral)]/30 bg-[var(--tourmate-sand)]">
+                  <AlertTriangle
+                    className="h-6 w-6 text-[var(--tourmate-coral-dark)]"
+                    aria-hidden="true"
+                  />
                 </div>
-                <h2 className="font-black text-xl md:text-2xl mt-4">Analysis failed</h2>
-                <p className="text-black/60 text-sm md:text-base mt-2 max-w-sm mx-auto">
-                  {analysisError ?? "Something went wrong while analyzing your photo. Please try again."}
+
+                <h2 className="mt-4 text-xl font-black text-[var(--tourmate-ink)] md:text-2xl">
+                  Analysis failed
+                </h2>
+
+                <p className="mx-auto mt-2 max-w-sm text-sm text-[var(--tourmate-dim)] md:text-base">
+                  {analysisError ??
+                    "Something went wrong while analyzing your photo. Please try again."}
                 </p>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-7">
+
+                <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
                   <button
                     type="button"
                     onClick={handleRetry}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#0038FF] text-white font-black text-sm md:text-base px-8 py-3.5 rounded-full shadow-lg hover:brightness-110 active:scale-[0.98] transition"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--tourmate-coral)] px-8 py-3.5 text-sm font-black text-white shadow-lg transition hover:bg-[var(--tourmate-coral-dark)] active:scale-[0.98] sm:w-auto md:text-base"
                   >
-                    <RotateCcw className="w-4 h-4" aria-hidden="true" />
+                    <RotateCcw className="h-4 w-4" aria-hidden="true" />
                     Try Again
                   </button>
+
                   <button
                     type="button"
                     onClick={handleRemove}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white text-black font-bold text-sm px-6 py-3.5 rounded-full border-[1.5px] border-black/15 hover:border-black/30 active:scale-[0.98] transition"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-full border-[1.5px] border-[var(--tourmate-line)] bg-white px-6 py-3.5 text-sm font-bold text-[var(--tourmate-ink)] transition hover:border-[var(--tourmate-coral)] active:scale-[0.98] sm:w-auto"
                   >
-                    <Upload className="w-4 h-4" aria-hidden="true" />
+                    <Upload className="h-4 w-4" aria-hidden="true" />
                     Choose a Different Photo
                   </button>
                 </div>
@@ -236,7 +268,7 @@ export default function AiGuidePage() {
             )}
           </div>
 
-          <p className="text-center text-white/70 text-xs md:text-sm mt-6">
+          <p className="mt-6 text-center text-xs text-white/70 md:text-sm">
             Supported formats: JPG, PNG, WEBP &middot; Max size 10MB
           </p>
         </div>
