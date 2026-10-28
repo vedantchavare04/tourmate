@@ -1,1 +1,36 @@
 @import "tailwindcss";
+
+:root {
+  --tourmate-ink: #12213a;
+  --tourmate-dim: #44546d;
+  --tourmate-sky: #c4e9f7;
+  --tourmate-sand: #fff3da;
+  --tourmate-line: #e6d9bd;
+  --tourmate-grass: #8fd0a6;
+  --tourmate-coral: #ff6b3d;
+  --tourmate-coral-dark: #b83a14;
+  --tourmate-teal: #14a3a0;
+  --tourmate-teal-dark: #0b6b69;
+  --tourmate-gold: #ffc93c;
+  --tourmate-gold-dark: #7a5200;
+  --tourmate-paper: #ffffff;
+
+  --background: var(--tourmate-paper);
+  --foreground: var(--tourmate-ink);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background: var(--tourmate-sky);
+  color: var(--tourmate-ink);
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+}
